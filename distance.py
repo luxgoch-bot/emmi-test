@@ -10,7 +10,7 @@ def calculate_driving_distance(address1, address2):
         address2 (str): The ending address string.
         
     Returns:
-        dict: A dictionary containing 'distance' (km) and 'duration' (minutes) keys.
+        dict: A dictionary containing 'distance_km' and 'duration_min' keys.
               
     Raises:
         ValueError: If geocoding or routing fails.
@@ -18,7 +18,8 @@ def calculate_driving_distance(address1, address2):
     
     def geo_code(address):
         """Geocode address using Nominatim API and return (lat, lon)."""
-        url = f"https://nominatim.openstreetmap.org/search.php?q={quote_plus(address)}&format=json"
+        # Added countrycodes=ch to restrict results to Switzerland, and limit=1 for top result
+        url = f"https://nominatim.openstreetmap.org/search.php?q={quote_plus(address)}&format=json&countrycodes=ch&limit=1"
         headers = {"User-Agent": "LuxGo-Emmi/1.0"}
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
@@ -27,6 +28,8 @@ def calculate_driving_distance(address1, address2):
             raise ValueError(f"Address not found: {address}")
         lat = float(json_response[0]["lat"])
         lon = float(json_response[0]["lon"])
+        # Print resolved address and coordinates for verification
+        print(f"Resolved '{address}' to: {json_response[0]['display_name']} ({lat}, {lon})")
         return (lat, lon)
 
     def get_route_distance(lat_lon1, lat_lon2):
@@ -52,11 +55,11 @@ def calculate_driving_distance(address1, address2):
     return get_route_distance(coords1, coords2)
 
 
-# Example usage
+# Example usage - Winterthur to Zürich should be ~30km
 if __name__ == "__main__":
     result = calculate_driving_distance(
-        "Bahnhofstrasse 1, Zurich",
-        "Place de Cornavin 1, Geneva"
+        "Bahnhofstrasse 1, Winterthur",
+        "Birmensdorferstrasse 507, Zürich"
     )
     print(f"Distance: {result['distance_km']} km")
     print(f"Duration: {result['duration_min']} minutes")
