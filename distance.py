@@ -18,7 +18,7 @@ def calculate_driving_distance(address1, address2):
     
     def geo_code(address):
         """Geocode address using Nominatim API and return (lat, lon)."""
-        # Added countrycodes=ch to restrict results to Switzerland, and limit=1 for top result
+        # countrycodes=ch restricts results to Switzerland
         url = f"https://nominatim.openstreetmap.org/search.php?q={quote_plus(address)}&format=json&countrycodes=ch&limit=1"
         headers = {"User-Agent": "LuxGo-Emmi/1.0"}
         response = requests.get(url, headers=headers, timeout=10)
@@ -55,11 +55,11 @@ def calculate_driving_distance(address1, address2):
     return get_route_distance(coords1, coords2)
 
 
-# Example usage - Winterthur to Zürich should be ~30km
+# Example usage - Zürich HB to Zürich Airport
 if __name__ == "__main__":
     result = calculate_driving_distance(
-        "Bahnhofstrasse 1, Winterthur",
-        "Birmensdorferstrasse 507, Zürich"
+        "Zürich Hauptbahnhof, Zürich",
+        "Flughafen Zürich, Kloten"
     )
     print(f"Distance: {result['distance_km']} km")
     print(f"Duration: {result['duration_min']} minutes")
